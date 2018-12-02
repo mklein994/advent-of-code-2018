@@ -27,4 +27,9 @@ mod tests {
     fn test_example_3() {
         assert_eq!(-6, get_freq("-1\n-2\n-3"));
     }
+
+    #[test]
+    fn test_part_1() {
+        assert_eq!(402, get_freq(include_str!("../../input/1.txt")));
+    }
 }
