@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 fn main() {
     let input = aoc2018::read_file(1);
     let freq = get_freq(&input);
@@ -14,17 +16,17 @@ fn get_freq(input: &str) -> i32 {
 }
 
 fn calibrate_freq(input: &str) -> i32 {
-    let mut seen: Vec<i32> = Vec::new();
+    let mut seen = HashSet::new();
     let mut sum = 0;
-    let lines = input.lines().map(|c| c.parse::<i32>().unwrap()).cycle();
-    for i in lines {
-        seen.push(sum);
-        sum += i;
-        if seen.iter().any(|&x| x == sum) {
-            break;
+    loop {
+        for i in input.lines().map(|c| c.parse::<i32>().unwrap()) {
+            seen.insert(sum);
+            sum += i;
+            if seen.contains(&sum) {
+                return sum;
+            }
         }
     }
-    sum
 }
 
 #[cfg(test)]
