@@ -20,3 +20,21 @@ fn checksum(input: &str) -> u32 {
 
     two_count * three_count
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn part_1_example() {
+        let input = "\
+abcdef
+bababc
+abbcde
+abcccd
+aabcdd
+abcdee
+ababab";
+        assert_eq!(12, checksum(&input));
+    }
+}
