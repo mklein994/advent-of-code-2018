@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 fn main() {
     let input = aoc2018::read_file(2);
 
@@ -5,6 +7,17 @@ fn main() {
     println!("{}", hash);
 }
 
+/// | Example | Two | Three |
+/// | ------- | --: | ----: |
+/// | `abcdef` contains no letters that appear exactly two or three times.  |   |   |
+/// | `bababc` contains two `a` and three `b`, so it counts for both.       | ✓ | ✓ |
+/// | `abbcde` contains two `b`, but no letter appears exactly three times. | ✓ |   |
+/// | `abcccd` contains three `c`, but no letter appears exactly two times. |   | ✓ |
+/// | `aabcdd` contains two `a` and two `d`, but it only counts once.       | ✓ |   |
+/// | `abcdee` contains two `e`.                                            | ✓ |   |
+/// | `ababab` contains three `a` and three `b`, but it only counts once.   |   | ✓ |
+///
+/// `4 * 3 = 12`
 fn checksum(input: &str) -> u32 {
     let mut two_count: u32 = 0;
     let mut three_count: u32 = 0;
