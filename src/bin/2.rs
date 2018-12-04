@@ -109,4 +109,13 @@ axcye
 wvxyz";
         assert_eq!("fgij", common_chars(&input));
     }
+
+    #[test]
+    fn part_2_test() {
+        assert_eq!(
+            // correct
+            "qysdtrkloagnfozuwujmhrbvx".to_string(),
+            common_chars(&include_str!("../../input/2.txt"))
+        );
+    }
 }
