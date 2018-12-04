@@ -73,6 +73,7 @@ ababab";
     #[test]
     fn part_1_test_input() {
         let input = include_str!("../../input/2.txt");
+        // correct
         assert_eq!(4980, checksum(&input));
     }
 }
