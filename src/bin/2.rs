@@ -26,34 +26,21 @@ fn checksum(input: &str) -> u32 {
         let mut count = BTreeMap::new();
 
         for c in line.chars() {
-            let mut entry = count.entry(c).or_insert_with(Occurrence::default);
-
-            if entry.count == 1 && !entry.two {
-                entry.two = true;
-            }
-
-            if entry.count == 2 && entry.two && !entry.three {
-                entry.two = false;
-                entry.three = true;
-            }
-
-            entry.count += 1;
+            *count.entry(c).or_insert(0) += 1u32;
         }
 
         let mut two_counted = false;
         let mut three_counted = false;
 
-        count.iter().for_each(|(_, o)| {
-            if !two_counted && o.two {
+        for (_, count) in count {
+            if !two_counted && count == 2 {
                 two_count += 1;
                 two_counted = true;
-            }
-
-            if !three_counted && o.three {
+            } else if !three_counted && count == 3 {
                 three_count += 1;
                 three_counted = true;
             }
-        });
+        }
     }
 
     two_count * three_count
