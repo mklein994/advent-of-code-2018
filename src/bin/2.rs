@@ -5,6 +5,9 @@ fn main() {
 
     let hash = checksum(&input);
     println!("{}", hash);
+
+    let common_chars = common_chars(&input);
+    println!("{}", common_chars);
 }
 
 /// | Example | Two | Three |
@@ -53,6 +56,23 @@ struct Occurrence {
     two: bool,
 }
 
+fn common_chars(input: &str) -> String {
+    for source_line in input.lines() {
+        for test_line in input.lines().filter(|l| *l != source_line) {
+            let comparisons = source_line
+                .chars()
+                .zip(test_line.chars())
+                .filter_map(|(s, t)| if s == t { Some(s) } else { None })
+                .collect::<String>();
+            if comparisons.len() == source_line.len() - 1 {
+                return comparisons;
+            }
+        }
+    }
+
+    String::new()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -75,5 +95,18 @@ ababab";
         let input = include_str!("../../input/2.txt");
         // correct
         assert_eq!(4980, checksum(&input));
+    }
+
+    #[test]
+    fn part_2_example() {
+        let input = "\
+abcde
+fghij
+klmno
+pqrst
+fguij
+axcye
+wvxyz";
+        assert_eq!("fgij", common_chars(&input));
     }
 }
