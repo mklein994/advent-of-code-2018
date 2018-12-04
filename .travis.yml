@@ -1,0 +1,10 @@
+language: rust
+rust:
+  #- stable # Enable once 2018 edition is stable
+  - beta
+  - nightly
+matrix:
+  allow_failures:
+    - rust: nightly
+
+# vim:ts=2:sw=2:et
