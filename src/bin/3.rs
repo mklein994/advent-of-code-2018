@@ -156,6 +156,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn test_example_1() {
         let input = "\
 #1 @ 1,3: 4x4
