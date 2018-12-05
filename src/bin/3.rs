@@ -122,10 +122,10 @@ impl fmt::Display for Claim {
         }
         for i in 1..=8 {
             for j in 1..=8 {
-                let mark = if i > self.start.x
-                    && i <= self.start.x + self.size.width
-                    && j > self.start.y
-                    && j <= self.start.y + self.size.height
+                let mark = if j > self.start.x
+                    && j <= self.start.x + self.size.width
+                    && i > self.start.y
+                    && i <= self.start.y + self.size.height
                 {
                     "#"
                 } else {
