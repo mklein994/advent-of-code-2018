@@ -133,7 +133,9 @@ impl fmt::Display for Claim {
                 };
                 write!(f, "{}", mark)?;
             }
-            writeln!(f)?;
+            if i < 8 {
+                writeln!(f)?;
+            }
         }
         Ok(())
     }
