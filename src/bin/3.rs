@@ -19,6 +19,7 @@ fn claimed_area(input: &str) -> Result<u32, Box<std::error::Error>> {
 
     let _ = claims
         .iter()
+        .inspect(|c| println!("{:#}", c))
         .inspect(|c| println!("{}", c))
         .map(|c| {
             [
@@ -28,7 +29,7 @@ fn claimed_area(input: &str) -> Result<u32, Box<std::error::Error>> {
                 (c.start.x, c.start.y + c.size.height),
             ]
         })
-        .inspect(|c| println!("{:?}", c))
+        .inspect(|c| println!("{:?}\n", c))
         .collect::<Vec<_>>();
 
     Ok(0)
@@ -109,6 +110,7 @@ impl FromStr for Claim {
 
 impl fmt::Display for Claim {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        const SIZE: u32 = 8;
         if f.alternate() {
             return write!(
                 f,
@@ -120,21 +122,35 @@ impl fmt::Display for Claim {
                 height = self.size.height
             );
         }
-        for i in 1..=8 {
-            for j in 1..=8 {
-                let mark = if j > self.start.x
-                    && j <= self.start.x + self.size.width
-                    && i > self.start.y
-                    && i <= self.start.y + self.size.height
-                {
-                    "#"
-                } else {
-                    "."
-                };
-                write!(f, "{}", mark)?;
-            }
-            if i < 8 {
+
+        for i in 0..=SIZE {
+            if i == 0 {
+                write!(f, " ")?;
+                for index in 1..=SIZE {
+                    write!(f, "{}", index)?;
+                }
                 writeln!(f)?;
+            } else {
+                for j in 0..=SIZE {
+                    if j == 0 {
+                        // write!(f, " ")?;
+                        write!(f, "{}", i)?;
+                    } else {
+                        let mark = if j > self.start.x
+                            && j <= self.start.x + self.size.width
+                            && i > self.start.y
+                            && i <= self.start.y + self.size.height
+                        {
+                            "#"
+                        } else {
+                            "."
+                        };
+                        write!(f, "{}", mark)?;
+                    }
+                }
+                if i < SIZE {
+                    writeln!(f)?;
+                }
             }
         }
         Ok(())
