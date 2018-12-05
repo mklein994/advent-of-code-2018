@@ -1,12 +1,13 @@
+use lazy_static::lazy_static;
+use regex::Regex;
 use std::fmt;
-use std::str::FromStr;
 
 fn main() -> Result<(), Box<std::error::Error>> {
-    // let input = aoc2018::read_file(3);
-    let input = "\
-#1 @ 1,3: 4x4
-#2 @ 3,1: 4x4
-#3 @ 5,5: 2x2";
+    let input = aoc2018::read_file(3);
+    // let input = "\
+    // #1 @ 1,3: 4x4
+    // #2 @ 3,1: 4x4
+    // #3 @ 5,5: 2x2";
 
     let claimed_area = claimed_area(&input)?;
     println!("{}", claimed_area);
@@ -31,11 +32,39 @@ fn claimed_area(input: &str) -> Result<u32, Box<std::error::Error>> {
     Ok(0)
 }
 
-fn parse_claims(input: &str) -> Result<Vec<Claim>, <Claim as FromStr>::Err> {
+/// Parse a new `Claim` from a string.
+///
+/// # Example:
+///
+/// `#123 @ 3,2: 5x4` would be parsed as follows:
+///
+/// | Name              | Value |
+/// | ----------------- | ----: |
+/// | Id                |   123 |
+/// | Inches from left  |    3" |
+/// | Inches from right |    2" |
+/// | Width             |    5" |
+/// | Height            |    4" |
+fn parse_claims(input: &str) -> Result<Vec<Claim>, Box<std::error::Error>> {
+    lazy_static! {
+        pub static ref CLAIM_PATTERN: Regex =
+            Regex::new(r"^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)$").unwrap();
+    }
+
     let mut claims: Vec<Claim> = Vec::with_capacity(input.lines().count());
 
     for line in input.lines() {
-        claims.push(Claim::from_str(&line)?);
+        let cap = CLAIM_PATTERN.captures(&line).unwrap();
+        let id = cap.get(1).unwrap().as_str().parse()?;
+        let start = Point {
+            x: cap.get(2).unwrap().as_str().parse()?,
+            y: cap.get(3).unwrap().as_str().parse()?,
+        };
+        let size = Size {
+            width: cap.get(4).unwrap().as_str().parse()?,
+            height: cap.get(5).unwrap().as_str().parse()?,
+        };
+        claims.push(Claim { id, start, size });
     }
     Ok(claims)
 }
@@ -57,51 +86,6 @@ struct Point {
 struct Size {
     width: u32,
     height: u32,
-}
-
-impl FromStr for Claim {
-    type Err = std::num::ParseIntError;
-
-    /// Parse a new `Claim` from a string.
-    ///
-    /// # Example:
-    ///
-    /// `#123 @ 3,2: 5x4` would be parsed as follows:
-    ///
-    /// | Name              | Value |
-    /// | ----------------- | ----: |
-    /// | Id                |   123 |
-    /// | Inches from left  |    3" |
-    /// | Inches from right |    2" |
-    /// | Width             |    5" |
-    /// | Height            |    4" |
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut groups = s.split_whitespace();
-        let id_str = groups.next().unwrap();
-        // skip the '@' sign
-        groups.next();
-        let start_str = groups.next().unwrap();
-        let size_str = groups.next().unwrap();
-
-        let id = id_str[1..].parse()?;
-        let start = {
-            let mut points = start_str.trim_end_matches(':').split(',');
-            Point {
-                x: points.next().expect("x point missing").parse::<u32>()?,
-                y: points.next().expect("y point missing").parse::<u32>()?,
-            }
-        };
-
-        let size = {
-            let mut size = size_str.split('x');
-            Size {
-                width: size.next().expect("width missing").parse::<u32>()?,
-                height: size.next().expect("height missing").parse::<u32>()?,
-            }
-        };
-
-        Ok(Claim { id, start, size })
-    }
 }
 
 impl fmt::Display for Claim {
@@ -147,8 +131,8 @@ mod tests {
 #2 @ 3,1: 4x4
 #3 @ 5,5: 2x2";
 
-        for line in input.lines() {
-            let claim = Claim::from_str(&line).unwrap();
+        let claims = parse_claims(&input).unwrap();
+        for claim in claims {
             println!("{:#}", claim);
             println!("{}", claim);
         }
