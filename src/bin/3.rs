@@ -19,10 +19,13 @@ fn claimed_area(input: &str) -> Result<u32, Box<std::error::Error>> {
 
     let _ = claims
         .iter()
+        .inspect(|c| println!("{}", c))
         .map(|c| {
             [
                 (c.start.x, c.start.y),
+                (c.start.x + c.size.width, c.start.y),
                 (c.start.x + c.size.width, c.start.y + c.size.height),
+                (c.start.x, c.start.y + c.size.height),
             ]
         })
         .inspect(|c| println!("{:?}", c))
