@@ -17,3 +17,5 @@ name = "3"
 path = "src/bin/3.rs"
 
 [dependencies]
+lazy_static = "1"
+regex = "1"
