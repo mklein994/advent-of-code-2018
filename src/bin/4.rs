@@ -1,8 +1,12 @@
+use lazy_static::lazy_static;
+use regex::Regex;
+use std::cmp::Ordering;
+use std::ops::Range;
+
 use std::str::FromStr;
 
 fn main() {
     let input = aoc2018::read_file(4);
-    println!("{}", input);
 
     let part_1_answer = part_1(&input);
 
@@ -10,17 +14,22 @@ fn main() {
 }
 
 fn part_1(input: &str) -> u32 {
+    let guards = parse_guards(input).unwrap();
+
     unimplemented!()
 }
 
 fn parse_guards(input: &str) -> Result<Vec<Guard>, Box<dyn std::error::Error>> {
-    let mut guards: Vec<Guard> = Vec::with_capacity(input.lines().count());
+    let mut guard_lines: Vec<GuardLine> = Vec::with_capacity(input.lines().count());
 
     for line in input.lines() {
-        guards.push(Guard::from_str(line)?);
+        guard_lines.push(GuardLine::from_str(line)?);
     }
 
-    Ok(guards)
+    guard_lines.sort_unstable_by(|gl1, gl2| gl1.datetime.cmp(&gl2.datetime));
+    guard_lines.iter().for_each(|l| println!("{:?}", l));
+
+    unimplemented!()
 }
 
 #[derive(Debug)]
@@ -35,7 +44,7 @@ struct SleepTime {
     state: SleepKind,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
 struct DateTime {
     year: u32,
     month: u32,
@@ -46,6 +55,7 @@ struct DateTime {
 
 #[derive(Debug)]
 enum SleepKind {
+    BeginShift { id: u32 },
     Awake,
     Asleep,
 }
@@ -56,11 +66,54 @@ impl Default for SleepKind {
     }
 }
 
-impl FromStr for Guard {
+#[derive(Debug)]
+struct GuardLine {
+    datetime: DateTime,
+    kind: SleepKind,
+}
+
+impl FromStr for GuardLine {
     type Err = Box<dyn std::error::Error>;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        unimplemented!()
+        lazy_static! {
+            // Inspired by BurntSushi's solution
+            static ref RE: Regex = Regex::new(
+                r"(?x)
+                \[
+                    (?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})
+                    \s+
+                    (?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})
+                \]
+                \s+
+                (?:Guard\ \#(?P<id>[0-9]+)\ begins\ shift|(?P<sleep>.+))"
+            )
+            .unwrap();
+        }
+
+        let caps = RE.captures(s).expect("couldn't parse event");
+
+        let datetime = DateTime {
+            year: caps["year"].parse()?,
+            month: caps["month"].parse()?,
+            day: caps["day"].parse()?,
+            hour: caps["hour"].parse()?,
+            minute: caps["minute"].parse()?,
+        };
+
+        let kind: SleepKind = if let Some(id) = caps.name("id") {
+            SleepKind::BeginShift {
+                id: id.as_str().parse()?,
+            }
+        } else if &caps["sleep"] == "falls asleep" {
+            SleepKind::Asleep
+        } else if &caps["sleep"] == "wakes up" {
+            SleepKind::Awake
+        } else {
+            panic!("Couldn't determine sleep kind")
+        };
+
+        Ok(GuardLine { datetime, kind })
     }
 }
 
