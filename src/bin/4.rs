@@ -44,13 +44,23 @@ struct SleepTime {
     state: SleepKind,
 }
 
-#[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
+#[derive(Ord, PartialOrd, Eq, PartialEq)]
 struct DateTime {
     year: u32,
     month: u32,
     day: u32,
     hour: u32,
     minute: u32,
+}
+
+impl std::fmt::Debug for DateTime {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(
+            f,
+            "{:04}-{:02}-{:02} {:02}:{:02}",
+            self.year, self.month, self.day, self.hour, self.minute
+        )
+    }
 }
 
 #[derive(Debug)]
