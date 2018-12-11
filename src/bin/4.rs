@@ -1,8 +1,8 @@
+use chrono::prelude::*;
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::cmp::Ordering;
 use std::ops::Range;
-
 use std::str::FromStr;
 
 fn main() {
@@ -40,26 +40,16 @@ struct Guard {
 
 #[derive(Debug)]
 struct SleepTime {
-    time: DateTime,
-    state: SleepKind,
+    time: NaiveDateTime,
+    is_asleep: bool,
 }
 
-#[derive(Ord, PartialOrd, Eq, PartialEq)]
-struct DateTime {
-    year: u32,
-    month: u32,
-    day: u32,
-    hour: u32,
-    minute: u32,
-}
-
-impl std::fmt::Debug for DateTime {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(
-            f,
-            "{:04}-{:02}-{:02} {:02}:{:02}",
-            self.year, self.month, self.day, self.hour, self.minute
-        )
+impl Default for SleepTime {
+    fn default() -> Self {
+        SleepTime {
+            time: NaiveDate::from_ymd(0, 0, 0).and_hms(0, 0, 0),
+            is_asleep: false,
+        }
     }
 }
 
@@ -78,7 +68,7 @@ impl Default for SleepKind {
 
 #[derive(Debug)]
 struct GuardLine {
-    datetime: DateTime,
+    datetime: NaiveDateTime,
     kind: SleepKind,
 }
 
@@ -91,9 +81,9 @@ impl FromStr for GuardLine {
             static ref RE: Regex = Regex::new(
                 r"(?x)
                 \[
-                    (?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})
+                    (?P<datetime>[0-9]{4}-[0-9]{2}-[0-9]{2}
                     \s+
-                    (?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})
+                    [0-9]{2}:[0-9]{2})
                 \]
                 \s+
                 (?:Guard\ \#(?P<id>[0-9]+)\ begins\ shift|(?P<sleep>.+))"
@@ -103,13 +93,7 @@ impl FromStr for GuardLine {
 
         let caps = RE.captures(s).expect("couldn't parse event");
 
-        let datetime = DateTime {
-            year: caps["year"].parse()?,
-            month: caps["month"].parse()?,
-            day: caps["day"].parse()?,
-            hour: caps["hour"].parse()?,
-            minute: caps["minute"].parse()?,
-        };
+        let datetime = NaiveDateTime::parse_from_str(&caps["datetime"], "%Y-%m-%d %H:%M")?;
 
         let kind: SleepKind = if let Some(id) = caps.name("id") {
             SleepKind::BeginShift {
