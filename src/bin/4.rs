@@ -1,9 +1,10 @@
 use chrono::prelude::*;
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::cmp::Ordering;
-use std::ops::Range;
+use std::collections::HashMap;
 use std::str::FromStr;
+
+type Guards = HashMap<u32, Vec<SleepTime>>;
 
 fn main() {
     // let input = aoc2018::read_file(4);
@@ -34,10 +35,33 @@ fn main() {
 fn part_1(input: &str) -> u32 {
     let guards = parse_guards(input).unwrap();
 
-    unimplemented!()
+    // zip up offset by one, and sum up the differences.
+    let sleepiest = guards
+        .iter()
+        .map(|(id, times)| {
+            let total: u32 = times
+                .iter()
+                .zip(&times[1..])
+                .filter_map(|(a, b)| {
+                    if a.is_asleep {
+                        Some((b.time - a.time).num_minutes() as u32)
+                    } else {
+                        None
+                    }
+                })
+                .sum();
+
+            (id, total)
+        })
+        .max_by(|a, b| a.1.cmp(&b.1))
+        .unwrap();
+
+    println!("{:?}", sleepiest);
+
+    sleepiest.0 * sleepiest.1
 }
 
-fn parse_guards(input: &str) -> Result<Vec<Guard>, Box<dyn std::error::Error>> {
+fn parse_guards(input: &str) -> Result<Guards, Box<dyn std::error::Error>> {
     let mut guard_lines: Vec<GuardLine> = Vec::with_capacity(input.lines().count());
 
     for line in input.lines() {
@@ -45,9 +69,33 @@ fn parse_guards(input: &str) -> Result<Vec<Guard>, Box<dyn std::error::Error>> {
     }
 
     guard_lines.sort_unstable_by(|gl1, gl2| gl1.datetime.cmp(&gl2.datetime));
-    guard_lines.iter().for_each(|l| println!("{:?}", l));
 
-    unimplemented!()
+    let mut guards: Guards = HashMap::new();
+    let mut current_id = None;
+
+    for line in guard_lines {
+        if let SleepKind::BeginShift { id } = line.kind {
+            current_id = Some(id);
+        }
+
+        let sleep = match line.kind {
+            SleepKind::BeginShift { .. } | SleepKind::Awake => SleepTime {
+                time: line.datetime,
+                is_asleep: false,
+            },
+            SleepKind::Asleep => SleepTime {
+                time: line.datetime,
+                is_asleep: true,
+            },
+        };
+
+        guards
+            .entry(current_id.expect("line found without an associated ID"))
+            .or_default()
+            .push(sleep);
+    }
+
+    Ok(guards)
 }
 
 #[derive(Debug)]
