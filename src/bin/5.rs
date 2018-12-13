@@ -1,7 +1,5 @@
 fn main() {
-    // let input = aoc2018::read_file(5);
-    // println!("{}", input);
-    let input = "dabAcCaCBAcCcaDA";
+    let input = aoc2018::read_file(5);
 
     let polymer_count = part1(&input);
     println!("{}", polymer_count);
