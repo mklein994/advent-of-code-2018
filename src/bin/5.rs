@@ -114,6 +114,7 @@ mod tests {
 
     #[test]
     fn part_1_test_input() {
+        // correct
         assert_eq!(9822, part1(INPUT));
     }
 
@@ -133,6 +134,7 @@ mod tests {
 
     #[test]
     fn test_part_2_input() {
+        // correct
         assert_eq!(5726, part2(&INPUT));
     }
 }
