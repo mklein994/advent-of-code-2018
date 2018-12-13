@@ -72,6 +72,21 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_react() {
+        for (a, b, expected) in &[
+            (b'A', b'A', false),
+            (b'A', b'B', false),
+            (b'A', b'a', true),
+            (b'a', b'B', false),
+            (b'a', b'a', false),
+            (b'a', b'b', false),
+        ] {
+            assert_eq!(*expected, react(*a, *b));
+            assert_eq!(*expected, react(*b, *a));
+        }
+    }
+
+    #[test]
     fn part_1_example_reaction() {
         let input = "dabAcCaCBAcCcaDA";
         assert_eq!("dabCBAcaDA", polymer_units(input));
