@@ -36,7 +36,10 @@ fn part1(input: &str) -> Result<usize> {
 }
 
 fn largest_area(points: &[Point]) -> Result<usize> {
-    points.iter().for_each(|p| println!("{:?}", p));
+    for point in points {
+        let shortest_distance = point.shortest_distance(&points);
+        println!("{:?}: {}", point, shortest_distance);
+    }
     unimplemented!()
 }
 
@@ -49,8 +52,23 @@ fn parse_points(input: &str) -> Result<Vec<Point>> {
     Ok(points)
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 struct Point(i32, i32);
+
+impl Point {
+    fn distance_to_point(&self, other: &Self) -> i32 {
+        i32::abs(self.0 - other.0) + i32::abs(self.1 - other.1)
+    }
+
+    fn shortest_distance(&self, points: &[Point]) -> i32 {
+        points
+            .iter()
+            .filter(|p| *p != self)
+            .map(|p| p.distance_to_point(self))
+            .min()
+            .unwrap()
+    }
+}
 
 impl FromStr for Point {
     type Err = std::num::ParseIntError;
