@@ -4,10 +4,23 @@ fn main() {
 
     let polymer_count = part1(&input);
     println!("{}", polymer_count);
+
+    let shortest_polymer = part2(&input);
+    println!("{}", shortest_polymer);
 }
 
 fn part1(input: &str) -> usize {
     polymer_units(&input).len()
+}
+
+fn part2(input: &str) -> usize {
+    let mut count = vec![];
+    for i in b'a'..=b'z' {
+        let polymer = input.replace(|c: char| c.eq_ignore_ascii_case(&char::from(i)), "");
+        count.push(part1(&polymer));
+    }
+
+    *count.iter().min().unwrap()
 }
 
 fn polymer_units(input: &str) -> String {
@@ -102,5 +115,24 @@ mod tests {
     #[test]
     fn part_1_test_input() {
         assert_eq!(9822, part1(INPUT));
+    }
+
+    #[test]
+    fn test_part_2() {
+        let input = "dabAcCaCBAcCcaDA";
+
+        assert_eq!(4, part2(input));
+    }
+
+    #[test]
+    fn test_part_2_example() {
+        let input = "dabAcCaCBAcCcaDA";
+
+        assert_eq!(4, part2(input));
+    }
+
+    #[test]
+    fn test_part_2_input() {
+        assert_eq!(5726, part2(&INPUT));
     }
 }
