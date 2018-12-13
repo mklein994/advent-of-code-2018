@@ -32,4 +32,11 @@ Step D must be finished before step E can begin.
 Step F must be finished before step E can begin.";
         assert_eq!("CABDFE", part1(&input));
     }
+
+    #[test]
+    #[ignore]
+    fn test_part_1_input() {
+        let input = include_str!("../../input/7.txt");
+        assert_eq!("", part1(&input));
+    }
 }
