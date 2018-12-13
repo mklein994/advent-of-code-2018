@@ -33,7 +33,7 @@ fn polymer_units(input: &str) -> String {
 
         // If we're on the last one, add it to the list since it doesn't have anything to react
         // with.
-        if i == polymer.len() {
+        if i % 2 == 0 && i == polymer.len() {
             reacted_polymer.push(polymer[i - 1]);
         }
 
@@ -101,6 +101,6 @@ mod tests {
     #[test]
     fn part_1_test_input() {
         let input = include_str!("../../input/5.txt");
-        assert_eq!(9823, part1(input));
+        assert_eq!(9822, part1(input));
     }
 }
