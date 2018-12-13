@@ -1,3 +1,4 @@
+use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
@@ -31,15 +32,14 @@ where
 fn part1(input: &str) -> Result<usize> {
     let points = parse_points(input)?;
 
-    let largest_area = largest_area(&points)?;
-    Ok(largest_area)
+    process_points(points);
+
+    // let largest_area = largest_area(&points)?;
+    // Ok(largest_area)
+    unimplemented!()
 }
 
 fn largest_area(points: &[Point]) -> Result<usize> {
-    for point in points {
-        let shortest_distance = point.shortest_distance(&points);
-        println!("{:?}: {}", point, shortest_distance);
-    }
     unimplemented!()
 }
 
@@ -52,7 +52,33 @@ fn parse_points(input: &str) -> Result<Vec<Point>> {
     Ok(points)
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+type PointMap = HashMap<Point, HashMap<Point, PointStats>>;
+
+#[derive(Debug, Default)]
+struct PointStats {
+    distance_to_point: i32,
+}
+
+fn process_points(mut points: Vec<Point>) {
+    let locations = points.clone();
+    let mut point_stats: PointMap = HashMap::new();
+    while let Some(point) = points.pop() {
+        locations.iter().filter(|p| **p != point).for_each(|p| {
+            let distance = p.distance_to_point(&point);
+            *point_stats.entry(point).or_default().entry(*p).or_default() = PointStats {
+                distance_to_point: distance,
+            };
+        });
+    }
+
+    point_stats.iter().for_each(|x| {
+        println!("{:?}", x.0);
+        x.1.iter().for_each(|i| println!("{:?}", i));
+    });
+    // println!("{:?}", point_stats);
+}
+
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 struct Point(i32, i32);
 
 impl Point {
