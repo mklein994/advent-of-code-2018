@@ -1,4 +1,5 @@
 fn main() {
+    // let input = "dabAcCaCBAcCcaDA";
     let input = aoc2018::read_file(5);
 
     let polymer_count = part1(&input);
@@ -69,6 +70,8 @@ fn react(a: u8, b: u8) -> bool {
 mod tests {
     use super::*;
 
+    const INPUT: &str = include_str!("../../input/5.txt");
+
     #[test]
     fn test_react() {
         for (a, b, expected) in &[
@@ -98,7 +101,6 @@ mod tests {
 
     #[test]
     fn part_1_test_input() {
-        let input = include_str!("../../input/5.txt");
-        assert_eq!(9822, part1(input));
+        assert_eq!(9822, part1(INPUT));
     }
 }
