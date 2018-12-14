@@ -19,8 +19,8 @@ fn part1(input: &str) -> u32 {
 
 #[derive(Debug)]
 struct Settings {
-    player_count: usize,
-    last_marble: usize,
+    player_count: u32,
+    last_marble: u32,
 }
 
 impl FromStr for Settings {
