@@ -1,5 +1,6 @@
 use lazy_static::lazy_static;
 use regex::Regex;
+use std::collections::BTreeMap;
 use std::str::FromStr;
 
 fn main() {
@@ -11,9 +12,19 @@ fn main() {
     println!("{}", high_score);
 }
 
+type Players = BTreeMap<u32, u32>;
+
 fn part1(input: &str) -> u32 {
     let settings = Settings::from_str(input).unwrap();
-    println!("{:?}", settings);
+
+    let mut players: Players = BTreeMap::new();
+    (1..=settings.player_count).for_each(|i| {
+        players.entry(i).or_default();
+    });
+    players.iter().for_each(|p| println!("{:?}", p));
+
+    let marbles: Vec<_> = (1..=settings.last_marble).rev().collect();
+    println!("{:?}", marbles);
     unimplemented!()
 }
 
