@@ -1,5 +1,6 @@
 use lazy_static::lazy_static;
 use regex::Regex;
+use std::collections::BTreeSet;
 use std::str::FromStr;
 
 fn main() {
@@ -19,20 +20,27 @@ Step F must be finished before step E can begin.";
 }
 
 fn part1(input: &str) -> &str {
-    let steps = input
+    let instructions = input
         .lines()
         .map(|line| {
             line.parse::<Instruction>()
                 .expect("Couldn't parse instruction")
         })
         .collect::<Vec<_>>();
-    steps.iter().for_each(|s| println!("{:?}", s));
+    instructions.iter().for_each(|i| println!("{:?}", i));
+
+    // println!("{:?}", instructions);
 
     unimplemented!()
 }
 
+type Step = char;
+
 #[derive(Debug)]
-struct Instruction(char, char);
+struct Instruction {
+    step: Step,
+    required: Step,
+}
 
 impl FromStr for Instruction {
     type Err = std::char::ParseCharError;
@@ -45,7 +53,10 @@ impl FromStr for Instruction {
         }
         let caps = RE.captures(s).unwrap();
 
-        Ok(Instruction(caps[1].parse()?, caps[2].parse()?))
+        Ok(Instruction {
+            step: caps[2].parse()?,
+            required: caps[1].parse()?,
+        })
     }
 }
 
