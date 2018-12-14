@@ -1,6 +1,10 @@
 fn main() {
-    let input = aoc2018::read_file(9);
-    println!("{}", input);
+    // let input = aoc2018::read_file(9);
+    let input = "10 players; last marble is worth 1618 points";
+    // println!("{}", input);
+
+    let high_score = part1(&input);
+    println!("{}", high_score);
 }
 
 fn part1(input: &str) -> u32 {
