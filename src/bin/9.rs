@@ -4,7 +4,7 @@ use std::str::FromStr;
 
 fn main() {
     // let input = aoc2018::read_file(9);
-    let input = "10 players; last marble is worth 1618 points";
+    let input = "9 players; last marble is worth 25 points";
     // println!("{}", input);
 
     let high_score = part1(&input);
@@ -56,6 +56,8 @@ mod tests {
             }
         };
     }
+
+    test!(example_0, "9 players; last marble is worth 25 points", 32);
 
     test!(
         example_1,
