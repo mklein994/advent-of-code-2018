@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 fn main() {
     // let input = aoc2018::read_file(9);
     let input = "10 players; last marble is worth 1618 points";
@@ -8,7 +10,22 @@ fn main() {
 }
 
 fn part1(input: &str) -> u32 {
+    let settings = Settings::from_str(input).unwrap();
     unimplemented!()
+}
+
+#[derive(Debug)]
+struct Settings {
+    player_count: usize,
+    last_marble: usize,
+}
+
+impl FromStr for Settings {
+    type Err = std::num::ParseIntError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        unimplemented!()
+    }
 }
 
 #[cfg(test)]
