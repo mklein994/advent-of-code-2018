@@ -21,10 +21,39 @@ fn part1(input: &str) -> u32 {
     (1..=settings.player_count).for_each(|i| {
         players.entry(i).or_default();
     });
-    players.iter().for_each(|p| println!("{:?}", p));
 
-    let marbles: Vec<_> = (1..=settings.last_marble).rev().collect();
-    println!("{:?}", marbles);
+    let mut circle: Vec<u32> = vec![0];
+
+    let mut current_marble = 0;
+
+    println!(
+        "start:\n\tcircle: {:?}\n\tcurrent_marble: {}",
+        circle, current_marble
+    );
+
+    for marble in 1..=settings.last_marble {
+        println!("{}", "-".repeat(10));
+        println!("marble: {}", marble);
+
+        match circle.get(current_marble + 1) {
+            Some(_) => {
+                circle.insert((current_marble + 1) as usize, marble);
+                current_marble = marble as usize;
+            }
+            None => {
+                circle.push(marble);
+                // current_marble = marble as usize;
+            }
+        }
+
+        println!("current_marble: {}", current_marble);
+        println!("{:?}", circle);
+    }
+
+    // println!("{:?}", circle);
+
+    // players.iter().for_each(|p| println!("{:?}", p));
+
     unimplemented!()
 }
 
