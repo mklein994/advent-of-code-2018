@@ -21,3 +21,5 @@ name = "5"
 path = "src/bin/5.rs"
 
 [dependencies]
+lazy_static = "1.2.0"
+regex = "1.1.0"
