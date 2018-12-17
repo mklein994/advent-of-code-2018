@@ -1,5 +1,6 @@
 use lazy_static::lazy_static;
 use regex::Regex;
+use std::cmp;
 use std::str::FromStr;
 
 fn main() {
@@ -24,9 +25,54 @@ fn part1(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
     for line in input.lines() {
         clay_pieces.push(line.parse()?);
     }
+    let bounds = get_bounds(&clay_pieces);
+    clay_pieces.iter_mut().for_each(|p| {
+        p.x1 -= bounds.left;
+        p.x2 -= bounds.left;
+        p.y1 -= bounds.top;
+        p.y2 -= bounds.top;
+    });
     clay_pieces.iter().for_each(|p| println!("{:?}", p));
 
+    draw_grid(&clay_pieces);
+
     Ok(0)
+}
+
+#[derive(Debug)]
+struct Bounds {
+    top: u32,
+    bottom: u32,
+    left: u32,
+    right: u32,
+}
+
+fn draw_grid(pieces: &[ClayPiece]) {
+    let bounds = get_bounds(&pieces);
+    println!("{:?}", bounds);
+
+    for y in bounds.top..=bounds.bottom {
+        for x in bounds.left..=bounds.right {
+            println!("{:?}", (x, y));
+        }
+    }
+}
+
+fn get_bounds(pieces: &[ClayPiece]) -> Bounds {
+    let initial_bounds = Bounds {
+        top: pieces[0].y1,
+        bottom: pieces[0].y2,
+        left: pieces[0].x1,
+        right: pieces[0].x2,
+    };
+
+    pieces.iter().fold(initial_bounds, |mut b, p| {
+        b.top = cmp::min(b.top, p.y1);
+        b.bottom = cmp::max(b.bottom, p.y2);
+        b.left = cmp::min(b.left, p.x1);
+        b.right = cmp::max(b.right, p.x2);
+        b
+    })
 }
 
 #[derive(Debug, Default)]
