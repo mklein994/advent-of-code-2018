@@ -1,6 +1,5 @@
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::ops::RangeInclusive;
 use std::str::FromStr;
 
 fn main() {
@@ -26,19 +25,16 @@ fn part1(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
         clay_pieces.push(line.parse()?);
     }
     clay_pieces.iter().for_each(|p| println!("{:?}", p));
+
     Ok(0)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 struct ClayPiece {
-    x: RangeInclusive<u32>,
-    y: RangeInclusive<u32>,
-}
-
-impl Default for ClayPiece {
-    fn default() -> Self {
-        Self { x: 0..=0, y: 0..=0 }
-    }
+    x1: u32,
+    y1: u32,
+    x2: u32,
+    y2: u32,
 }
 
 impl FromStr for ClayPiece {
@@ -67,12 +63,16 @@ impl FromStr for ClayPiece {
 
         let piece = match &s[0..1] {
             "x" => ClayPiece {
-                x: coord..=coord,
-                y: start..=end,
+                x1: coord,
+                x2: coord,
+                y1: start,
+                y2: end,
             },
             "y" => ClayPiece {
-                x: start..=end,
-                y: coord..=coord,
+                x1: start,
+                x2: end,
+                y1: coord,
+                y2: coord,
             },
             _ => panic!("unknown clay piece"),
         };
