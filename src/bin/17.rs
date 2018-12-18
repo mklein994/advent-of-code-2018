@@ -84,7 +84,7 @@ impl Clay {
     }
 
     fn draw_grid(&self) {
-        let Clay { pieces, bounds } = self;
+        let Self { pieces, bounds } = self;
         println!("{:?}", bounds);
 
         // Fill the grid with sand (`.`) pieces.
