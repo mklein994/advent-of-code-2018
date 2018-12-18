@@ -42,6 +42,7 @@ fn part1(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
 struct Clay {
     pieces: Vec<ClayPiece>,
     bounds: Bounds,
+    time: u64,
 }
 
 impl Clay {
@@ -56,7 +57,11 @@ impl Clay {
             p.y2 -= bounds.top;
         });
 
-        Self { pieces, bounds }
+        Self {
+            pieces,
+            bounds,
+            time: 0,
+        }
     }
 
     fn get_bounds(pieces: &[ClayPiece]) -> Bounds {
@@ -84,7 +89,7 @@ impl Clay {
     }
 
     fn draw_grid(&self) {
-        let Self { pieces, bounds } = self;
+        let Self { pieces, bounds, .. } = self;
         println!("{:?}", bounds);
 
         // Fill the grid with sand (`.`) pieces.
@@ -109,6 +114,10 @@ impl Clay {
         }
 
         println!("{}", grid_string);
+    }
+
+    fn step(&mut self) {
+        self.time += 1;
     }
 }
 
