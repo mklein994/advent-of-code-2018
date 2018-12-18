@@ -45,12 +45,17 @@ fn part1(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
 struct Grid {
     grid: Vec<Vec<u8>>,
     bounds: Bounds,
+    time: u64,
 }
 
 impl Grid {
     fn add_water_spring(&mut self) {
         self.grid[WATER_SPRING.0 as usize][WATER_SPRING.1 as usize - self.bounds.left as usize] =
             b'+';
+    }
+
+    fn step(&mut self) {
+        self.time += 1;
     }
 }
 
@@ -69,6 +74,7 @@ impl From<Clay> for Grid {
         Grid {
             grid,
             bounds: clay.bounds,
+            time: 0,
         }
     }
 }
@@ -85,7 +91,6 @@ impl fmt::Display for Grid {
 struct Clay {
     pieces: Vec<ClayPiece>,
     bounds: Bounds,
-    time: u64,
 }
 
 impl Clay {
@@ -100,11 +105,7 @@ impl Clay {
             p.y2 -= bounds.top;
         });
 
-        Self {
-            pieces,
-            bounds,
-            time: 0,
-        }
+        Self { pieces, bounds }
     }
 
     fn get_bounds(pieces: &[ClayPiece]) -> Bounds {
@@ -129,10 +130,6 @@ impl Clay {
             "water from spring does not fall on clay pieces"
         );
         bounds
-    }
-
-    fn step(&mut self) {
-        self.time += 1;
     }
 }
 
