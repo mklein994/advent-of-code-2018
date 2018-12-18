@@ -1,6 +1,7 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::cmp;
+use std::fmt;
 use std::str::FromStr;
 
 const WATER_SPRING: (u32, u32) = (0, 500);
@@ -33,9 +34,51 @@ fn part1(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
 
     // clay_pieces.iter().for_each(|p| println!("{:?}", p));
 
-    clay.draw_grid();
+    let mut grid = Grid::from(clay);
+    grid.add_water_spring();
+
+    println!("{}", grid);
 
     Ok(0)
+}
+
+struct Grid {
+    grid: Vec<Vec<u8>>,
+    bounds: Bounds,
+}
+
+impl Grid {
+    fn add_water_spring(&mut self) {
+        self.grid[WATER_SPRING.0 as usize][WATER_SPRING.1 as usize - self.bounds.left as usize] =
+            b'+';
+    }
+}
+
+impl From<Clay> for Grid {
+    fn from(clay: Clay) -> Self {
+        let mut grid = vec![vec![b'.'; clay.bounds.width() + 1]; clay.bounds.height() + 1];
+
+        for piece in clay.pieces {
+            for row in piece.y1..=piece.y2 {
+                for column in piece.x1..=piece.x2 {
+                    grid[row as usize][column as usize] = b'#';
+                }
+            }
+        }
+
+        Grid {
+            grid,
+            bounds: clay.bounds,
+        }
+    }
+}
+
+impl fmt::Display for Grid {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.grid
+            .iter()
+            .try_for_each(|row| writeln!(f, "{}", std::str::from_utf8(&row).unwrap()))
+    }
 }
 
 #[derive(Debug)]
@@ -86,34 +129,6 @@ impl Clay {
             "water from spring does not fall on clay pieces"
         );
         bounds
-    }
-
-    fn draw_grid(&self) {
-        let Self { pieces, bounds, .. } = self;
-        println!("{:?}", bounds);
-
-        // Fill the grid with sand (`.`) pieces.
-        let mut grid = vec![vec![b'.'; bounds.width() + 1]; bounds.height() + 1];
-
-        // Add the water spring to the grid.
-        grid[0][WATER_SPRING.1 as usize - 1 - bounds.left as usize] = b'+';
-
-        for piece in pieces {
-            for row in piece.y1..=piece.y2 {
-                for column in piece.x1..=piece.x2 {
-                    // Insert a piece of clay into the grid.
-                    grid[row as usize][column as usize] = b'#';
-                }
-            }
-        }
-
-        let mut grid_string = String::new();
-        for row in grid {
-            grid_string.push_str(std::str::from_utf8(&row).unwrap());
-            grid_string.push('\n');
-        }
-
-        println!("{}", grid_string);
     }
 
     fn step(&mut self) {
