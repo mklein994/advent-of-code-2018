@@ -3,6 +3,8 @@ use regex::Regex;
 use std::cmp;
 use std::str::FromStr;
 
+const WATER_SPRING: (usize, usize) = (0, 500);
+
 fn main() {
     // let input = aoc2018::read_file(17);
     let input = "\
@@ -14,6 +16,7 @@ x=506, y=1..2
 x=498, y=10..13
 x=504, y=10..13
 y=13, x=498..504";
+
     // println!("{}", input);
 
     let area = part1(&input).unwrap();
@@ -26,15 +29,18 @@ fn part1(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
         clay_pieces.push(line.parse()?);
     }
     let bounds = get_bounds(&clay_pieces);
+
+    // Normalize the pieces to fit within the bounds.
     clay_pieces.iter_mut().for_each(|p| {
         p.x1 -= bounds.left;
         p.x2 -= bounds.left;
         p.y1 -= bounds.top;
         p.y2 -= bounds.top;
     });
-    clay_pieces.iter().for_each(|p| println!("{:?}", p));
 
-    draw_grid(&clay_pieces);
+    // clay_pieces.iter().for_each(|p| println!("{:?}", p));
+
+    draw_grid(&clay_pieces, &bounds);
 
     Ok(0)
 }
@@ -47,32 +53,65 @@ struct Bounds {
     right: u32,
 }
 
-fn draw_grid(pieces: &[ClayPiece]) {
-    let bounds = get_bounds(&pieces);
+impl Bounds {
+    fn width(&self) -> usize {
+        (self.right - self.left) as usize
+    }
+
+    fn height(&self) -> usize {
+        (self.bottom - self.top) as usize
+    }
+}
+
+fn draw_grid(pieces: &[ClayPiece], bounds: &Bounds) {
     println!("{:?}", bounds);
 
-    for y in bounds.top..=bounds.bottom {
-        for x in bounds.left..=bounds.right {
-            println!("{:?}", (x, y));
+    // Fill the grid with sand (`.`) pieces.
+    let mut grid = vec![vec![b'.'; bounds.width() + 1]; bounds.height() + 1];
+
+    // Add the water spring to the grid.
+    grid[0][WATER_SPRING.1 - 1 - bounds.left as usize] = b'+';
+
+    for piece in pieces {
+        for row in piece.y1..=piece.y2 {
+            for column in piece.x1..=piece.x2 {
+                // Insert a piece of clay into the grid.
+                grid[row as usize][column as usize] = b'#';
+            }
         }
     }
+
+    let mut grid_string = String::new();
+    for row in grid {
+        grid_string.push_str(std::str::from_utf8(&row).unwrap());
+        grid_string.push('\n');
+    }
+
+    println!("{}", grid_string);
 }
 
 fn get_bounds(pieces: &[ClayPiece]) -> Bounds {
     let initial_bounds = Bounds {
-        top: pieces[0].y1,
+        // The water spring starts at (0, 500), so the top must be 0. The x coordinates will be
+        // normalized to fit within the bounds.
+        top: WATER_SPRING.0 as u32,
         bottom: pieces[0].y2,
         left: pieces[0].x1,
         right: pieces[0].x2,
     };
 
-    pieces.iter().fold(initial_bounds, |mut b, p| {
+    let bounds = pieces.iter().fold(initial_bounds, |mut b, p| {
         b.top = cmp::min(b.top, p.y1);
         b.bottom = cmp::max(b.bottom, p.y2);
         b.left = cmp::min(b.left, p.x1);
         b.right = cmp::max(b.right, p.x2);
         b
-    })
+    });
+    assert!(
+        bounds.left <= 500 && bounds.right >= 500,
+        "water from spring does not fall on clay pieces"
+    );
+    bounds
 }
 
 #[derive(Debug, Default)]
@@ -108,13 +147,13 @@ impl FromStr for ClayPiece {
         let end = caps["end"].parse()?;
 
         let piece = match &s[0..1] {
-            "x" => ClayPiece {
+            "x" => Self {
                 x1: coord,
                 x2: coord,
                 y1: start,
                 y2: end,
             },
-            "y" => ClayPiece {
+            "y" => Self {
                 x1: start,
                 x2: end,
                 y1: coord,
