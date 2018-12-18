@@ -3,7 +3,7 @@ use regex::Regex;
 use std::cmp;
 use std::str::FromStr;
 
-const WATER_SPRING: (usize, usize) = (0, 500);
+const WATER_SPRING: (u32, u32) = (0, 500);
 
 fn main() {
     // let input = aoc2018::read_file(17);
@@ -63,7 +63,7 @@ impl Clay {
         let initial_bounds = Bounds {
             // The water spring starts at (0, 500), so the top must be 0. The x coordinates will be
             // normalized to fit within the bounds.
-            top: WATER_SPRING.0 as u32,
+            top: WATER_SPRING.0,
             bottom: pieces[0].y2,
             left: pieces[0].x1,
             right: pieces[0].x2,
@@ -91,7 +91,7 @@ impl Clay {
         let mut grid = vec![vec![b'.'; bounds.width() + 1]; bounds.height() + 1];
 
         // Add the water spring to the grid.
-        grid[0][WATER_SPRING.1 - 1 - bounds.left as usize] = b'+';
+        grid[0][WATER_SPRING.1 as usize - 1 - bounds.left as usize] = b'+';
 
         for piece in pieces {
             for row in piece.y1..=piece.y2 {
