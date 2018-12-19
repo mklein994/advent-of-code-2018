@@ -68,13 +68,16 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
     while ground.time < MAX_TIME {
         ground.time += 1;
 
-        ground
-            .points
-            .iter()
-            .for_each(|p| println!("{}", std::str::from_utf8(&p).unwrap()));
+        draw_ground(&ground.points);
     }
 
     Ok(0)
+}
+
+fn draw_ground(points: &[Vec<u8>]) {
+    points
+        .iter()
+        .for_each(|p| println!("{}", std::str::from_utf8(&p).unwrap()));
 }
 
 #[derive(Debug)]
