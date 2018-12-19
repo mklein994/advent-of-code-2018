@@ -40,8 +40,8 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
     for vein in &clay_veins {
         // `bounds.top` is already determined at its limit.
         bounds.bottom = cmp::max(bounds.bottom, vein.y2);
-        bounds.left = cmp::min(bounds.left, vein.x1);
-        bounds.right = cmp::max(bounds.right, vein.x2);
+        bounds.left = cmp::min(bounds.left, vein.x1 - 1);
+        bounds.right = cmp::max(bounds.right, vein.x2 + 1);
     }
 
     println!("{:?}", bounds);
@@ -53,7 +53,7 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
     };
 
     // Add the water spring.
-    ground.points[0][500 - 1 - bounds.left] = b'+';
+    ground.points[0][500 - bounds.left] = b'+';
 
     // Add the clay veins.
     for clay in clay_veins {
