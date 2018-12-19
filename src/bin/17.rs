@@ -12,6 +12,8 @@ fn main() {
 }
 
 fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
+    const MAX_TIME: u64 = 10;
+
     let mut clay_veins: Vec<Clay> = vec![];
     for line in input.lines() {
         clay_veins.push(line.parse()?);
@@ -53,9 +55,14 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
         }
     }
 
-    ground.points
-        .iter()
-        .for_each(|p| println!("{}", std::str::from_utf8(&p).unwrap()));
+    while ground.time < MAX_TIME {
+        ground.time += 1;
+
+        ground
+            .points
+            .iter()
+            .for_each(|p| println!("{}", std::str::from_utf8(&p).unwrap()));
+    }
 
     Ok(0)
 }
