@@ -48,19 +48,19 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
 
     // Make the ground sand by default.
     let mut ground = Ground {
-        points: vec![vec![b'.'; bounds.width() + 1]; bounds.height() + 1],
+        grid: vec![vec![b'.'; bounds.width() + 1]; bounds.height() + 1],
         time: 0,
     };
 
     // Add the water spring.
-    ground.points[0][500 - bounds.left] = b'+';
+    ground.grid[0][500 - bounds.left] = b'+';
 
     // Add the clay veins.
     for clay in clay_veins {
         for row in clay.y1..=clay.y2 {
             for column in clay.x1..=clay.x2 {
                 // println!("{:?}", (column, row));
-                ground.points[row][column - bounds.left] = b'#';
+                ground.grid[row][column - bounds.left] = b'#';
             }
         }
     }
@@ -68,21 +68,22 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
     while ground.time < MAX_TIME {
         ground.time += 1;
 
-        draw_ground(&ground.points);
+        let grid = &ground.grid;
+
+        draw_ground(&grid);
     }
 
     Ok(0)
 }
 
-fn draw_ground(points: &[Vec<u8>]) {
-    points
-        .iter()
+fn draw_ground(grid: &[Vec<u8>]) {
+    grid.iter()
         .for_each(|p| println!("{}", std::str::from_utf8(&p).unwrap()));
 }
 
 #[derive(Debug)]
 struct Ground {
-    points: Vec<Vec<u8>>,
+    grid: Vec<Vec<u8>>,
     time: u64,
 }
 
