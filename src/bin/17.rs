@@ -1,7 +1,6 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::cmp;
-use std::collections::HashMap;
 use std::str::FromStr;
 
 fn main() {
@@ -73,8 +72,6 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
         ( 1, -1), ( 1, 0), ( 1, 1),
     ];
 
-    let mut grid_map: HashMap<(usize, usize), Vec<Option<u8>>> = HashMap::new();
-
     while ground.time < MAX_TIME {
         ground.time += 1;
 
@@ -82,7 +79,7 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
 
         for row in 0..grid.len() {
             for col in 0..grid[0].len() {
-                *grid_map.entry((row, col)).or_default() = NEIGHBOURS
+                let neighbours: Neighbours = NEIGHBOURS
                     .into_iter()
                     .map(|&(r, c)| {
                         if row as isize + r >= 0
@@ -95,16 +92,83 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
                             None
                         }
                     })
-                    .collect::<Vec<_>>();
-                let current = &mut grid[row][col];
+                    .collect::<Vec<_>>()
+                    .into();
+                let mut current = &mut grid[row][col];
+
+                process_cell(&mut current, &neighbours);
             }
         }
 
         draw_ground(&grid);
-        grid_map.iter().for_each(|g| println!("{:?}", g));
     }
 
     Ok(0)
+}
+
+#[derive(Debug)]
+struct Neighbours {
+    tl: Option<GroundType>,
+    tm: Option<GroundType>,
+    tr: Option<GroundType>,
+    ml: Option<GroundType>,
+    mr: Option<GroundType>,
+    bl: Option<GroundType>,
+    bm: Option<GroundType>,
+    br: Option<GroundType>,
+}
+
+impl From<Vec<Option<u8>>> for Neighbours {
+    fn from(list: Vec<Option<u8>>) -> Self {
+        let list = list
+            .into_iter()
+            .map(|i| match i {
+                Some(t) => Some(GroundType::from(t)),
+                None => None,
+            })
+            .collect::<Vec<_>>();
+        Self {
+            tl: list[0],
+            tm: list[1],
+            tr: list[2],
+            ml: list[3],
+            mr: list[4],
+            bl: list[5],
+            bm: list[6],
+            br: list[7],
+        }
+    }
+}
+
+#[derive(Debug, Copy, Clone)]
+enum GroundType {
+    Sand,
+    Spring,
+    WasWet,
+    Clay,
+    Water,
+}
+
+impl From<u8> for GroundType {
+    fn from(c: u8) -> Self {
+        match c {
+            b'.' => GroundType::Sand,
+            b'+' => GroundType::Spring,
+            b'|' => GroundType::WasWet,
+            b'#' => GroundType::Clay,
+            b'~' => GroundType::Water,
+            _ => panic!("unknown ground type"),
+        }
+    }
+}
+
+fn process_cell(current: &mut u8, neighbours: &Neighbours) {
+    let current_type = GroundType::from(*current);
+    println!("{:?}", current_type);
+
+    if let GroundType::WasWet = current_type {
+        unimplemented!();
+    }
 }
 
 fn draw_ground(grid: &[Vec<u8>]) {
