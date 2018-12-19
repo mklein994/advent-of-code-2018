@@ -1,6 +1,7 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::cmp;
+use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
 
@@ -39,6 +40,10 @@ fn part1(input: &str) -> Result<u32, Box<dyn std::error::Error>> {
 
     println!("{}", grid);
 
+    grid.step();
+
+    println!("{}", grid);
+
     Ok(0)
 }
 
@@ -46,17 +51,6 @@ struct Grid {
     grid: Vec<Vec<u8>>,
     bounds: Bounds,
     time: u64,
-}
-
-impl Grid {
-    fn add_water_spring(&mut self) {
-        self.grid[WATER_SPRING.0 as usize][WATER_SPRING.1 as usize - self.bounds.left as usize] =
-            b'+';
-    }
-
-    fn step(&mut self) {
-        self.time += 1;
-    }
 }
 
 impl From<Clay> for Grid {
