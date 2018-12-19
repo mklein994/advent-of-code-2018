@@ -25,7 +25,7 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
         right: 500,
     };
 
-    for vein in clay_veins {
+    for vein in &clay_veins {
         // `bounds.top` is already determined at its limit.
         bounds.bottom = cmp::max(bounds.bottom, vein.y2);
         bounds.left = cmp::min(bounds.left, vein.x1);
@@ -34,12 +34,26 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
 
     println!("{:?}", bounds);
 
-    let grid = Grid {
-        points: vec![vec![b'.'; bounds.width()]; bounds.height()],
+    // Make the ground sand by default.
+    let mut ground = Ground {
+        points: vec![vec![b'.'; bounds.width() + 1]; bounds.height() + 1],
         time: 0,
     };
 
-    grid.points
+    // Add the water spring.
+    ground.points[0][500 - 1 - bounds.left] = b'+';
+
+    // Add the clay veins.
+    for clay in clay_veins {
+        for row in clay.y1..=clay.y2 {
+            for column in clay.x1..=clay.x2 {
+                // println!("{:?}", (column, row));
+                ground.points[row][column - bounds.left] = b'#';
+            }
+        }
+    }
+
+    ground.points
         .iter()
         .for_each(|p| println!("{}", std::str::from_utf8(&p).unwrap()));
 
@@ -47,7 +61,7 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
 }
 
 #[derive(Debug)]
-struct Grid {
+struct Ground {
     points: Vec<Vec<u8>>,
     time: u64,
 }
