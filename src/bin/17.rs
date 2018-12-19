@@ -65,6 +65,13 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
         }
     }
 
+    #[rustfmt::skip]
+    const NEIGHBOURS: [(isize, isize); 8] = [
+        (-1, -1), (-1, 0), (-1, 1),
+        ( 0, -1),          ( 0, 1),
+        ( 1, -1), ( 1, 0), ( 1, 1),
+    ];
+
     while ground.time < MAX_TIME {
         ground.time += 1;
 
