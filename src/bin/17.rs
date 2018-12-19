@@ -1,6 +1,7 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::cmp;
+use std::collections::HashMap;
 use std::str::FromStr;
 
 fn main() {
@@ -72,12 +73,35 @@ fn part1(input: &str) -> Result<usize, Box<dyn std::error::Error>> {
         ( 1, -1), ( 1, 0), ( 1, 1),
     ];
 
+    let mut grid_map: HashMap<(usize, usize), Vec<Option<u8>>> = HashMap::new();
+
     while ground.time < MAX_TIME {
         ground.time += 1;
 
-        let grid = &ground.grid;
+        let grid = &mut ground.grid;
+
+        for row in 0..grid.len() {
+            for col in 0..grid[0].len() {
+                *grid_map.entry((row, col)).or_default() = NEIGHBOURS
+                    .into_iter()
+                    .map(|&(r, c)| {
+                        if row as isize + r >= 0
+                            && col as isize + c >= 0
+                            && ((row as isize + r) as usize) < grid.len()
+                            && ((col as isize + c) as usize) < grid[0].len()
+                        {
+                            Some(grid[(row as isize + r) as usize][(col as isize + c) as usize])
+                        } else {
+                            None
+                        }
+                    })
+                    .collect::<Vec<_>>();
+                let current = &mut grid[row][col];
+            }
+        }
 
         draw_ground(&grid);
+        grid_map.iter().for_each(|g| println!("{:?}", g));
     }
 
     Ok(0)
