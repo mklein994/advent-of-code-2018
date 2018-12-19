@@ -140,7 +140,7 @@ impl From<Vec<Option<u8>>> for Neighbours {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 enum GroundType {
     Sand,
     Spring,
@@ -164,11 +164,22 @@ impl From<u8> for GroundType {
 
 fn process_cell(current: &mut u8, neighbours: &Neighbours) {
     let current_type = GroundType::from(*current);
-    println!("{:?}", current_type);
 
-    if let GroundType::WasWet = current_type {
-        unimplemented!();
+    if current_type == GroundType::Sand
+        && neighbours.tm.filter(|x| *x == GroundType::Spring).is_some()
+    {
+        *current = b'|';
     }
+
+    if neighbours.tm.filter(|x| *x == GroundType::WasWet).is_some()
+        && current_type == GroundType::Sand
+    {
+        *current = b'|';
+    }
+
+    // TODO: Don't change `current`, as this affects the surrounding cells before the minute
+    // completed.
+    unimplemented!("do the actual logic here");
 }
 
 fn draw_ground(grid: &[Vec<u8>]) {
