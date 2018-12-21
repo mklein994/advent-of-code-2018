@@ -79,7 +79,7 @@ impl fmt::Display for Ground {
         for row in self.bounds.top..=self.bounds.bottom {
             for col in self.bounds.left..=self.bounds.right {
                 let coord = Coordinate { x: col, y: row };
-                if coord.x == 500 && coord.y == 0 {
+                if coord == self.spring {
                     write!(f, "+")?;
                 } else if self.clay.contains(&coord) {
                     write!(f, "#")?;
