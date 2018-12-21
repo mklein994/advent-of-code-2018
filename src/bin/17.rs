@@ -22,6 +22,7 @@ x=504, y=10..13
 y=13, x=498..504";
 
     let area = part1(&input).unwrap();
+    println!("{}", area);
 }
 
 fn part1(input: &str) -> Result<i64> {
