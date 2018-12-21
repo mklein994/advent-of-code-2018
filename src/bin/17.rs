@@ -33,10 +33,8 @@ fn part1(input: &str) -> Result<i64> {
     for line in input.lines() {
         veins.push(line.parse()?);
     }
-    println!("{:?}", veins);
 
     let bounds = Bounds::new(&veins);
-    println!("{:?}", bounds);
 
     let mut ground = Ground::new();
 
@@ -49,7 +47,6 @@ fn part1(input: &str) -> Result<i64> {
     }
     ground.bounds = bounds;
 
-    println!("{:#?}", ground);
     println!("{}", ground);
 
     unimplemented!()
