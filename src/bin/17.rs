@@ -57,6 +57,7 @@ fn part1(input: &str) -> Result<i64> {
 
 #[derive(Debug)]
 struct Ground {
+    spring: Coordinate,
     clay: HashSet<Coordinate>,
     bounds: Bounds,
 }
@@ -64,6 +65,7 @@ struct Ground {
 impl Ground {
     fn new() -> Self {
         Self {
+            spring: Coordinate { x: 500, y: 0 },
             clay: HashSet::default(),
             bounds: Bounds {
                 top: 0,
@@ -79,7 +81,10 @@ impl fmt::Display for Ground {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for row in self.bounds.top..=self.bounds.bottom {
             for col in self.bounds.left..=self.bounds.right {
-                if self.clay.contains(&Coordinate { x: col, y: row }) {
+                let coord = Coordinate { x: col, y: row };
+                if coord.x == 500 && coord.y == 0 {
+                    write!(f, "+")?;
+                } else if self.clay.contains(&coord) {
                     write!(f, "#")?;
                 } else {
                     write!(f, ".")?;
