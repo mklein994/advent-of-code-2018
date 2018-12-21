@@ -93,7 +93,7 @@ impl fmt::Display for Ground {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 struct Coordinate {
     x: i64,
     y: i64,
