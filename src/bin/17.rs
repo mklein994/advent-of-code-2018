@@ -36,7 +36,7 @@ fn part1(input: &str) -> Result<i64> {
 
     let bounds = Bounds::new(&veins);
 
-    let mut ground = Ground::new();
+    let mut ground = Ground::default();
 
     for vein in veins {
         for y in vein.y1..=vein.y2 {
@@ -59,17 +59,12 @@ struct Ground {
     bounds: Bounds,
 }
 
-impl Ground {
-    fn new() -> Self {
+impl Default for Ground {
+    fn default() -> Self {
         Self {
             spring: Coordinate { x: 500, y: 0 },
             clay: HashSet::default(),
-            bounds: Bounds {
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-            },
+            bounds: Bounds::default(),
         }
     }
 }
@@ -99,7 +94,7 @@ struct Coordinate {
     y: i64,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 struct Bounds {
     top: i64,
     bottom: i64,
