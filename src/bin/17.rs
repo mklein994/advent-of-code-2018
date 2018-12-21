@@ -91,9 +91,9 @@ impl Bounds {
             },
             |mut b, v| {
                 // Top is already calculated.
-                b.bottom = cmp::max(v.y2, b.bottom);
-                b.left = cmp::max(v.y2, b.left);
-                b.right = cmp::max(v.y2, b.right);
+                b.bottom = cmp::max(b.bottom, v.y2);
+                b.left = cmp::min(b.left, v.x1);
+                b.right = cmp::max(b.right, v.x2);
                 b
             },
         )
