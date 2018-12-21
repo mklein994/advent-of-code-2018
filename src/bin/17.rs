@@ -1,6 +1,7 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::cmp;
+use std::collections::HashSet;
 use std::error::Error;
 use std::str::FromStr;
 
@@ -36,7 +37,38 @@ fn part1(input: &str) -> Result<i64> {
     let bounds = Bounds::new(&veins);
     println!("{:?}", bounds);
 
+    let mut ground = Ground::new();
+
+    for vein in veins {
+        for y in vein.y1..=vein.y2 {
+            for x in vein.x1..=vein.x2 {
+                ground.clay.insert(Coordinate { x, y });
+            }
+        }
+    }
+
+    println!("{:#?}", ground);
+
     unimplemented!()
+}
+
+#[derive(Debug)]
+struct Ground {
+    clay: HashSet<Coordinate>,
+}
+
+impl Ground {
+    fn new() -> Self {
+        Self {
+            clay: HashSet::default(),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq, Hash)]
+struct Coordinate {
+    x: i64,
+    y: i64,
 }
 
 #[derive(Debug)]
