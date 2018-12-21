@@ -1,5 +1,6 @@
 use lazy_static::lazy_static;
 use regex::Regex;
+use std::cmp;
 use std::error::Error;
 use std::str::FromStr;
 
@@ -32,7 +33,47 @@ fn part1(input: &str) -> Result<i64> {
     }
     println!("{:?}", veins);
 
+    let bounds = Bounds::new(&veins);
+    println!("{:?}", bounds);
+
     unimplemented!()
+}
+
+#[derive(Debug)]
+struct Bounds {
+    top: i64,
+    bottom: i64,
+    left: i64,
+    right: i64,
+}
+
+impl Bounds {
+    fn new(veins: &[ClayVein]) -> Self {
+        veins.iter().fold(
+            Self {
+                // Set to where the water spring is.
+                top: 0,
+                bottom: veins[0].y2,
+                left: veins[0].x1,
+                right: veins[0].x2,
+            },
+            |mut b, v| {
+                // Top is already calculated.
+                b.bottom = cmp::max(v.y2, b.bottom);
+                b.left = cmp::max(v.y2, b.left);
+                b.right = cmp::max(v.y2, b.right);
+                b
+            },
+        )
+    }
+
+    fn width(&self) -> i64 {
+        self.right - self.left
+    }
+
+    fn height(&self) -> i64 {
+        self.bottom - self.top
+    }
 }
 
 #[derive(Debug)]
