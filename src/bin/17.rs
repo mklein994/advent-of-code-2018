@@ -3,6 +3,7 @@ use regex::Regex;
 use std::cmp;
 use std::collections::HashSet;
 use std::error::Error;
+use std::fmt;
 use std::str::FromStr;
 
 macro_rules! err {
@@ -46,8 +47,10 @@ fn part1(input: &str) -> Result<i64> {
             }
         }
     }
+    ground.bounds = bounds;
 
     println!("{:#?}", ground);
+    println!("{}", ground);
 
     unimplemented!()
 }
@@ -55,13 +58,36 @@ fn part1(input: &str) -> Result<i64> {
 #[derive(Debug)]
 struct Ground {
     clay: HashSet<Coordinate>,
+    bounds: Bounds,
 }
 
 impl Ground {
     fn new() -> Self {
         Self {
             clay: HashSet::default(),
+            bounds: Bounds {
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+            },
         }
+    }
+}
+
+impl fmt::Display for Ground {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for row in self.bounds.top..=self.bounds.bottom {
+            for col in self.bounds.left..=self.bounds.right {
+                if self.clay.contains(&Coordinate { x: col, y: row }) {
+                    write!(f, "#")?;
+                } else {
+                    write!(f, ".")?;
+                }
+            }
+            writeln!(f)?;
+        }
+        Ok(())
     }
 }
 
