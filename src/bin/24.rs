@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::error::Error;
 
 fn main() {
@@ -23,6 +24,29 @@ cold) with an attack that does 12 slashing damage at initiative 4";
 fn part1(input: &str) -> Result<usize, Box<Error>> {
     unimplemented!()
 }
+
+#[derive(Debug)]
+struct Armies(Vec<Group>);
+
+#[derive(Debug)]
+enum Allegiance {
+    ImmuneSystem,
+    Infection,
+}
+
+#[derive(Debug)]
+struct Group {
+    allegiance: Allegiance,
+    unit_count: u32,
+    initiative: u32,
+    immunities: HashSet<AttackType>,
+    weaknesses: HashSet<AttackType>,
+    attack_damage: u32,
+    attack_type: AttackType,
+}
+
+#[derive(Debug, Hash, PartialEq, Eq)]
+struct AttackType(String);
 
 #[cfg(test)]
 mod tests {
