@@ -59,9 +59,6 @@ fn part1(input: &str) -> Result<usize, Box<Error>> {
     Ok(0)
 }
 
-//TODO: use BTreeSet instead of Vec
-type Armies = Vec<Group>;
-
 #[derive(Debug)]
 enum Allegiance {
     ImmuneSystem,
