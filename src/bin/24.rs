@@ -26,16 +26,20 @@ cold) with an attack that does 12 slashing damage at initiative 4";
 
 fn part1(input: &str) -> Result<usize, Box<Error>> {
     lazy_static! {
-        static ref RE: Regex = Regex::new(r"(?x)
-        (?P<unit_count>\d+)(?-x: units each with )
-        (?P<hit_points>\d+)(?-x: hit points )
-        (?:\(
-            (?P<defenses>(?:(?P<defense_type>weak|immune)\ to\ (?P<defense>(?:\w+(?-x:, )?)+))(?:;\ )?)+
-        \)\ )?
-        (?-x:with an attack that does )
-        (?P<damage>\d+)\ (?P<attack_type>\w+)(?-x: damage at initiative )
-        (?P<initiative>\d+)
-        ").unwrap();
+        static ref RE: Regex = Regex::new(
+            r"(?x)
+            (?P<unit_count>\d+)(?-x: units each with )
+            (?P<hit_points>\d+)(?-x: hit points )
+            (?:\(
+                (?:(?P<defense_type>weak|immune)\ to\ (?P<defense>(?:\w+(?-x:, )?)+))?
+                (?:;\ )?
+                (?:(?P<other_defense_type>weak|immune)\ to\ (?P<other_defense>(?:\w+(?-x:, )?)+))?
+            \)\ )?
+            (?-x:with an attack that does )
+            (?P<damage>\d+)\ (?P<attack_type>\w+)(?-x: damage at initiative )
+            (?P<initiative>\d+)"
+        )
+        .unwrap();
     }
 
     // Skip the heading, and stop at the next empty line.
