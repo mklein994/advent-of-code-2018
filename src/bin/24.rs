@@ -42,19 +42,101 @@ fn part1(input: &str) -> Result<usize, Box<Error>> {
         .unwrap();
     }
 
+    let mut groups: Vec<Group> = vec![];
+
     // Skip the heading, and stop at the next empty line.
     for line in input.lines().skip(1).take_while(|l| l.len() != 0) {
+        let allegiance = Allegiance::ImmuneSystem;
         let caps = RE
             .captures(line)
             .expect("unknown immune system group captures");
-        println!("{:#?}", caps);
+
+        let mut group = Group {
+            allegiance,
+            unit_count: caps["unit_count"].parse()?,
+            initiative: caps["initiative"].parse()?,
+            attack_damage: caps["damage"].parse()?,
+            attack_kind: AttackKind(caps["attack_kind"].to_string()),
+            ..Default::default()
+        };
+
+        if let Some(defense) = caps.name("defense_kind") {
+            let defenses = caps["defense"]
+                .to_string()
+                .split(",")
+                .map(|d| d.trim())
+                .map(|d| AttackKind(d.to_string()))
+                .collect::<Vec<_>>();
+            match defense.as_str() {
+                "weak" => group.weaknesses = defenses,
+                "immune" => group.immunities = defenses,
+                _ => panic!("unknown defense kind"),
+            };
+        }
+
+        if let Some(defense) = caps.name("other_defense_kind") {
+            let defenses = caps["other_defense"]
+                .to_string()
+                .split(",")
+                .map(|d| d.trim())
+                .map(|d| AttackKind(d.to_string()))
+                .collect::<Vec<_>>();
+            match defense.as_str() {
+                "weak" => group.weaknesses = defenses,
+                "immune" => group.immunities = defenses,
+                _ => panic!("unknown defense kind"),
+            };
+        }
+
+        groups.push(group);
     }
 
     // Skip until the next section, then skip the blank line and the heading.
     for line in input.lines().skip_while(|l| l.len() != 0).skip(2) {
+        let allegiance = Allegiance::Infection;
         let caps = RE.captures(line).expect("unknown infection group captures");
-        println!("{:#?}", caps);
+
+        let mut group = Group {
+            allegiance,
+            unit_count: caps["unit_count"].parse()?,
+            initiative: caps["initiative"].parse()?,
+            attack_damage: caps["damage"].parse()?,
+            attack_kind: AttackKind(caps["attack_kind"].to_string()),
+            ..Default::default()
+        };
+
+        if let Some(defense) = caps.name("defense_kind") {
+            let defenses = caps["defense"]
+                .to_string()
+                .split(",")
+                .map(|d| d.trim())
+                .map(|d| AttackKind(d.to_string()))
+                .collect::<Vec<_>>();
+            match defense.as_str() {
+                "weak" => group.weaknesses = defenses,
+                "immune" => group.immunities = defenses,
+                _ => panic!("unknown defense kind"),
+            };
+        }
+
+        if let Some(defense) = caps.name("other_defense_kind") {
+            let defenses = caps["other_defense"]
+                .to_string()
+                .split(",")
+                .map(|d| d.trim())
+                .map(|d| AttackKind(d.to_string()))
+                .collect::<Vec<_>>();
+            match defense.as_str() {
+                "weak" => group.weaknesses = defenses,
+                "immune" => group.immunities = defenses,
+                _ => panic!("unknown defense kind"),
+            };
+        }
+
+        groups.push(group);
     }
+
+    groups.iter().for_each(|g| println!("{:?}", g));
 
     Ok(0)
 }
