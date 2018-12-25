@@ -152,6 +152,10 @@ impl Armies {
 
         Ok(Armies { groups })
     }
+
+    fn fight(&self) -> Result<(), Box<Error>> {
+        unimplemented!()
+    }
 }
 
 #[derive(Debug)]
