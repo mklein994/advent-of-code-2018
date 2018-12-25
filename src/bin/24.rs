@@ -25,6 +25,12 @@ cold) with an attack that does 12 slashing damage at initiative 4";
 }
 
 fn part1(input: &str) -> Result<usize, Box<Error>> {
+    let groups = parse_groups(&input)?;
+    groups.iter().for_each(|g| println!("{:?}", g));
+    Ok(0)
+}
+
+fn parse_groups(input: &str) -> Result<Vec<Group>, Box<Error>> {
     lazy_static! {
         static ref RE: Regex = Regex::new(
             r"(?x)
@@ -132,9 +138,7 @@ fn part1(input: &str) -> Result<usize, Box<Error>> {
         groups.push(group);
     }
 
-    groups.iter().for_each(|g| println!("{:?}", g));
-
-    Ok(0)
+    Ok(groups)
 }
 
 #[derive(Debug)]
