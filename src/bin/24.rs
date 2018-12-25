@@ -62,8 +62,8 @@ fn part1(input: &str) -> Result<usize, Box<Error>> {
 
         if let Some(defense) = caps.name("defense_kind") {
             let defenses = caps["defense"]
+                .trim_matches(char::is_whitespace)
                 .split(',')
-                .map(|d| d.trim())
                 .map(|d| AttackKind(d.to_string()))
                 .collect::<Vec<_>>();
             match defense.as_str() {
@@ -75,8 +75,8 @@ fn part1(input: &str) -> Result<usize, Box<Error>> {
 
         if let Some(defense) = caps.name("other_defense_kind") {
             let defenses = caps["other_defense"]
+                .trim_matches(char::is_whitespace)
                 .split(',')
-                .map(|d| d.trim())
                 .map(|d| AttackKind(d.to_string()))
                 .collect::<Vec<_>>();
             match defense.as_str() {
@@ -105,8 +105,8 @@ fn part1(input: &str) -> Result<usize, Box<Error>> {
 
         if let Some(defense) = caps.name("defense_kind") {
             let defenses = caps["defense"]
+                .trim_matches(char::is_whitespace)
                 .split(',')
-                .map(|d| d.trim())
                 .map(|d| AttackKind(d.to_string()))
                 .collect::<Vec<_>>();
             match defense.as_str() {
@@ -118,8 +118,8 @@ fn part1(input: &str) -> Result<usize, Box<Error>> {
 
         if let Some(defense) = caps.name("other_defense_kind") {
             let defenses = caps["other_defense"]
+                .trim_matches(char::is_whitespace)
                 .split(',')
-                .map(|d| d.trim())
                 .map(|d| AttackKind(d.to_string()))
                 .collect::<Vec<_>>();
             match defense.as_str() {
