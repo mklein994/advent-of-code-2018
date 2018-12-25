@@ -31,12 +31,12 @@ fn part1(input: &str) -> Result<usize, Box<Error>> {
             (?P<unit_count>\d+)(?-x: units each with )
             (?P<hit_points>\d+)(?-x: hit points )
             (?:\(
-                (?:(?P<defense_type>weak|immune)\ to\ (?P<defense>(?:\w+(?-x:, )?)+))?
+                (?:(?P<defense_kind>weak|immune)\ to\ (?P<defense>(?:\w+(?-x:, )?)+))?
                 (?:;\ )?
-                (?:(?P<other_defense_type>weak|immune)\ to\ (?P<other_defense>(?:\w+(?-x:, )?)+))?
+                (?:(?P<other_defense_kind>weak|immune)\ to\ (?P<other_defense>(?:\w+(?-x:, )?)+))?
             \)\ )?
             (?-x:with an attack that does )
-            (?P<damage>\d+)\ (?P<attack_type>\w+)(?-x: damage at initiative )
+            (?P<damage>\d+)\ (?P<attack_kind>\w+)(?-x: damage at initiative )
             (?P<initiative>\d+)"
         )
         .unwrap();
@@ -79,14 +79,14 @@ struct Group {
     allegiance: Allegiance,
     unit_count: u32,
     initiative: u32,
-    immunities: Vec<AttackType>,
-    weaknesses: Vec<AttackType>,
+    immunities: Vec<AttackKind>,
+    weaknesses: Vec<AttackKind>,
     attack_damage: u32,
-    attack_type: AttackType,
+    attack_kind: AttackKind,
 }
 
 #[derive(Debug, Default)]
-struct AttackType(String);
+struct AttackKind(String);
 
 #[cfg(test)]
 mod tests {
