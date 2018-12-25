@@ -1,5 +1,8 @@
-use std::collections::HashSet;
+use lazy_static::lazy_static;
+use regex::Regex;
+use std::cmp::Ordering;
 use std::error::Error;
+use std::str::FromStr;
 
 fn main() {
     // let input = aoc2018::read_file(24);
@@ -22,11 +25,38 @@ cold) with an attack that does 12 slashing damage at initiative 4";
 }
 
 fn part1(input: &str) -> Result<usize, Box<Error>> {
-    unimplemented!()
+    lazy_static! {
+        static ref RE: Regex = Regex::new(r"(?x)
+        (?P<unit_count>\d+)(?-x: units each with )
+        (?P<hit_points>\d+)(?-x: hit points )
+        (?:\(
+            (?P<defenses>(?:(?P<defense_type>weak|immune)\ to\ (?P<defense>(?:\w+(?-x:, )?)+))(?:;\ )?)+
+        \)\ )?
+        (?-x:with an attack that does )
+        (?P<damage>\d+)\ (?P<attack_type>\w+)(?-x: damage at initiative )
+        (?P<initiative>\d+)
+        ").unwrap();
+    }
+
+    // Skip the heading, and stop at the next empty line.
+    for line in input.lines().skip(1).take_while(|l| l.len() != 0) {
+        let caps = RE
+            .captures(line)
+            .expect("unknown immune system group captures");
+        println!("{:#?}", caps);
+    }
+
+    // Skip until the next section, then skip the blank line and the heading.
+    for line in input.lines().skip_while(|l| l.len() != 0).skip(2) {
+        let caps = RE.captures(line).expect("unknown infection group captures");
+        println!("{:#?}", caps);
+    }
+
+    Ok(0)
 }
 
-#[derive(Debug)]
-struct Armies(Vec<Group>);
+//TODO: use BTreeSet instead of Vec
+type Armies = Vec<Group>;
 
 #[derive(Debug)]
 enum Allegiance {
@@ -34,18 +64,24 @@ enum Allegiance {
     Infection,
 }
 
-#[derive(Debug)]
+impl Default for Allegiance {
+    fn default() -> Self {
+        Allegiance::ImmuneSystem
+    }
+}
+
+#[derive(Debug, Default)]
 struct Group {
     allegiance: Allegiance,
     unit_count: u32,
     initiative: u32,
-    immunities: HashSet<AttackType>,
-    weaknesses: HashSet<AttackType>,
+    immunities: Vec<AttackType>,
+    weaknesses: Vec<AttackType>,
     attack_damage: u32,
     attack_type: AttackType,
 }
 
-#[derive(Debug, Hash, PartialEq, Eq)]
+#[derive(Debug, Default)]
 struct AttackType(String);
 
 #[cfg(test)]
