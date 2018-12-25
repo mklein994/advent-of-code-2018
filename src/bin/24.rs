@@ -177,6 +177,12 @@ struct Group {
     attack_kind: AttackKind,
 }
 
+impl Group {
+    fn effective_power(&self) -> u32 {
+        self.unit_count * self.attack_damage
+    }
+}
+
 #[derive(Debug, Default)]
 struct AttackKind(String);
 
